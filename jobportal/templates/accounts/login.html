@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Login - Job Portal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="card-title mb-4">Login</h2>
+                <form method="post" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+                <p class="mt-3 mb-0 text-center text-muted small">Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

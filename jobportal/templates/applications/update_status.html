@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Update Application Status - Job Portal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="card-title mb-3">Update Application Status</h2>
+                <p class="text-muted">Applicant: <strong>{{ application.applicant.username }}</strong><br>Job: {{ application.job.title }}</p>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_status" class="form-label">Status</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}<div class="text-danger small">{{ form.status.errors.0 }}</div>{% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="{% url 'applications:job_applicants' application.job.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

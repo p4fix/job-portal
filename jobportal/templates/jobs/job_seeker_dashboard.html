@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Job Seeker Dashboard - Job Portal{% endblock %}
+{% block content %}
+<h1 class="mb-4">Job Seeker Dashboard</h1>
+<p class="lead text-muted">Track your applications and find new opportunities.</p>
+<a href="{% url 'jobs:job_list' %}" class="btn btn-primary mb-4">Browse Jobs</a>
+<a href="{% url 'applications:my_applications' %}" class="btn btn-outline-primary mb-4">My Applications</a>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white"><h5 class="mb-0">Recent Applications</h5></div>
+    <div class="card-body p-0">
+        {% if applications %}
+            <ul class="list-group list-group-flush">
+                {% for app in applications %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <a href="{% url 'jobs:job_detail' app.job.pk %}" class="fw-bold text-decoration-none">{{ app.job.title }}</a>
+                            <span class="text-muted"> · {{ app.job.company_name }}</span>
+                        </div>
+                        <span class="badge {% if app.status == 'Accepted' %}bg-success{% elif app.status == 'Rejected' %}bg-danger{% else %}bg-secondary{% endif %}">{{ app.status }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="p-4 mb-0 text-muted">You haven't applied to any jobs yet. <a href="{% url 'jobs:job_list' %}">Browse jobs</a> to get started.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

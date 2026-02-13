@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Profile - Job Portal{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-4">My Profile</h2>
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile" class="img-fluid rounded-circle" style="max-height: 120px;">
+                        {% else %}
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                <i class="bi bi-person display-4 text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Role:</strong> {{ profile.get_role_display }}</p>
+                        <p><strong>Phone:</strong> {{ profile.phone|default:"—" }}</p>
+                        <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

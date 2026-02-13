@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Apply - {{ job.title }} - Job Portal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="card-title mb-2">Apply for: {{ job.title }}</h2>
+                <p class="text-muted mb-4">{{ job.company_name }} · {{ job.location }}</p>
+                <form method="post" enctype="multipart/form-data" action="{% url 'applications:apply' job.pk %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_resume" class="form-label">Resume (PDF only)</label>
+                        <input type="file" name="resume" id="id_resume" class="form-control" accept=".pdf" required>
+                        {% if form.resume.errors %}<div class="text-danger small">{{ form.resume.errors.0 }}</div>{% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                    <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
