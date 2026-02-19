@@ -38,6 +38,7 @@
                         {% elif user_role == 'job_seeker' %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'jobs:job_seeker_dashboard' %}">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'applications:my_applications' %}">My Applications</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'jobs:saved_jobs' %}">Saved Jobs</a></li>
                         {% endif %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a></li>
                     {% endif %}

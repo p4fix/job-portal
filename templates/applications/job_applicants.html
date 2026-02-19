@@ -16,6 +16,7 @@
                             <th>Email</th>
                             <th>Applied On</th>
                             <th>Status</th>
+                            <th>Notes</th>
                             <th>Resume</th>
                             <th>Action</th>
                         </tr>
@@ -23,12 +24,19 @@
                     <tbody>
                         {% for app in applications %}
                             <tr>
-                                <td>{{ app.applicant.username }}</td>
+                                <td><strong>{{ app.applicant.username }}</strong></td>
                                 <td>{{ app.applicant.email }}</td>
                                 <td>{{ app.applied_at|date:"M d, Y H:i" }}</td>
                                 <td><span class="badge {% if app.status == 'Accepted' %}bg-success{% elif app.status == 'Rejected' %}bg-danger{% else %}bg-secondary{% endif %}">{{ app.status }}</span></td>
-                                <td><a href="{{ app.resume.url }}" class="btn btn-sm btn-outline-primary" target="_blank">View PDF</a></td>
-                                <td><a href="{% url 'applications:update_status' app.pk %}" class="btn btn-sm btn-primary">Change Status</a></td>
+                                <td>
+                                    {% if app.notes %}
+                                        <small class="text-muted" title="{{ app.notes }}">{{ app.notes|truncatewords:5 }}</small>
+                                    {% else %}
+                                        <small class="text-muted">—</small>
+                                    {% endif %}
+                                </td>
+                                <td><a href="{{ app.resume.url }}" class="btn btn-sm btn-outline-primary" target="_blank"><i class="bi bi-file-pdf"></i> View</a></td>
+                                <td><a href="{% url 'applications:update_status' app.pk %}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i> Update</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

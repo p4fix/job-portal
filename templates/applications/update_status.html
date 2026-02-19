@@ -14,7 +14,13 @@
                         {{ form.status }}
                         {% if form.status.errors %}<div class="text-danger small">{{ form.status.errors.0 }}</div>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <div class="mb-3">
+                        <label for="id_notes" class="form-label">Internal Notes <small class="text-muted">(optional)</small></label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}<div class="text-danger small">{{ form.notes.errors.0 }}</div>{% endif %}
+                        <small class="form-text text-muted">Add notes about this applicant (only visible to you).</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check"></i> Update</button>
                     <a href="{% url 'applications:job_applicants' application.job.pk %}" class="btn btn-outline-secondary">Cancel</a>
                 </form>
             </div>

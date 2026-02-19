@@ -1,35 +1,102 @@
 {% extends 'base.html' %}
 {% block title %}Job Listings - Job Portal{% endblock %}
 {% block content %}
-<h1 class="mb-4">Job Listings</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-briefcase"></i> Job Listings</h1>
+    <span class="badge bg-primary">{{ page_obj.paginator.count }} Jobs</span>
+</div>
 
-<form method="get" class="row g-3 mb-4">
-    <div class="col-md-4">
-        <label for="q" class="form-label">Search by title</label>
-        <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Job title...">
-    </div>
-    <div class="col-md-4">
-        <label for="location" class="form-label">Filter by location</label>
-        <input type="text" class="form-control" id="location" name="location" value="{{ location }}" placeholder="Location...">
-    </div>
-    <div class="col-md-4 d-flex align-items-end">
-        <button type="submit" class="btn btn-primary me-2">Search</button>
-        <a href="{% url 'jobs:job_list' %}" class="btn btn-outline-secondary">Clear</a>
-    </div>
-</form>
-
-<div class="list-group">
-    {% for job in page_obj %}
-        <a href="{% url 'jobs:job_detail' job.pk %}" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ job.title }}</h5>
-                <small class="text-muted">{{ job.created_at|date:"M d, Y" }}</small>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="q" class="form-label"><i class="bi bi-search"></i> Search</label>
+                <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Job title or company...">
             </div>
-            <p class="mb-1"><strong>{{ job.company_name }}</strong> · {{ job.location }}</p>
-            <small class="text-muted">Salary: {{ job.salary }}</small>
-        </a>
+            <div class="col-md-2">
+                <label for="location" class="form-label"><i class="bi bi-geo-alt"></i> Location</label>
+                <input type="text" class="form-control" id="location" name="location" value="{{ location }}" placeholder="City...">
+            </div>
+            <div class="col-md-2">
+                <label for="category" class="form-label"><i class="bi bi-tags"></i> Category</label>
+                <select class="form-select" id="category" name="category">
+                    <option value="">All Categories</option>
+                    <option value="IT" {% if category == 'IT' %}selected{% endif %}>IT</option>
+                    <option value="Finance" {% if category == 'Finance' %}selected{% endif %}>Finance</option>
+                    <option value="Healthcare" {% if category == 'Healthcare' %}selected{% endif %}>Healthcare</option>
+                    <option value="Education" {% if category == 'Education' %}selected{% endif %}>Education</option>
+                    <option value="Marketing" {% if category == 'Marketing' %}selected{% endif %}>Marketing</option>
+                    <option value="Sales" {% if category == 'Sales' %}selected{% endif %}>Sales</option>
+                    <option value="Engineering" {% if category == 'Engineering' %}selected{% endif %}>Engineering</option>
+                    <option value="Design" {% if category == 'Design' %}selected{% endif %}>Design</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="job_type" class="form-label"><i class="bi bi-clock"></i> Type</label>
+                <select class="form-select" id="job_type" name="job_type">
+                    <option value="">All Types</option>
+                    <option value="Full-time" {% if job_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                    <option value="Part-time" {% if job_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                    <option value="Contract" {% if job_type == 'Contract' %}selected{% endif %}>Contract</option>
+                    <option value="Internship" {% if job_type == 'Internship' %}selected{% endif %}>Internship</option>
+                    <option value="Freelance" {% if job_type == 'Freelance' %}selected{% endif %}>Freelance</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="experience" class="form-label"><i class="bi bi-person-badge"></i> Experience</label>
+                <select class="form-select" id="experience" name="experience">
+                    <option value="">All Levels</option>
+                    <option value="Entry" {% if experience == 'Entry' %}selected{% endif %}>Entry</option>
+                    <option value="Mid" {% if experience == 'Mid' %}selected{% endif %}>Mid</option>
+                    <option value="Senior" {% if experience == 'Senior' %}selected{% endif %}>Senior</option>
+                    <option value="Executive" {% if experience == 'Executive' %}selected{% endif %}>Executive</option>
+                </select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
+            </div>
+        </form>
+        {% if query or location or category or job_type or experience %}
+            <div class="mt-2">
+                <a href="{% url 'jobs:job_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-circle"></i> Clear Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-3">
+    {% for job in page_obj %}
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="card-title mb-1"><a href="{% url 'jobs:job_detail' job.pk %}" class="text-decoration-none">{{ job.title }}</a></h5>
+                            <p class="text-muted mb-1"><i class="bi bi-building"></i> {{ job.company_name }}</p>
+                        </div>
+                        <span class="badge bg-secondary">{{ job.job_type }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted"><i class="bi bi-geo-alt"></i> {{ job.location }}</small>
+                        <span class="mx-2">·</span>
+                        <small class="text-muted"><i class="bi bi-tag"></i> {{ job.get_category_display }}</small>
+                        <span class="mx-2">·</span>
+                        <small class="text-muted"><i class="bi bi-person-badge"></i> {{ job.get_experience_level_display }}</small>
+                    </div>
+                    <p class="card-text small text-muted mb-2"><i class="bi bi-currency-dollar"></i> {{ job.salary }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted"><i class="bi bi-calendar"></i> {{ job.created_at|date:"M d, Y" }}</small>
+                        <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% empty %}
-        <p class="text-muted">No jobs found.</p>
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No jobs found. Try adjusting your filters.
+            </div>
+        </div>
     {% endfor %}
 </div>
 
@@ -37,11 +104,17 @@
 <nav class="mt-4" aria-label="Job pagination">
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if location %}&location={{ location }}{% endif %}">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if experience %}&experience={{ experience }}{% endif %}">Previous</a></li>
         {% endif %}
-        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if experience %}&experience={{ experience }}{% endif %}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
         {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if location %}&location={{ location }}{% endif %}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if experience %}&experience={{ experience }}{% endif %}">Next</a></li>
         {% endif %}
     </ul>
 </nav>

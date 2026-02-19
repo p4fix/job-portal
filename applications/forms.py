@@ -21,7 +21,8 @@ class ApplicationForm(forms.ModelForm):
 class ApplicationStatusForm(forms.ModelForm):
     class Meta:
         model = Application
-        fields = ['status']
+        fields = ['status', 'notes']
         widgets = {
             'status': forms.Select(attrs={'class': 'form-select'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Internal notes (optional)...'}),
         }

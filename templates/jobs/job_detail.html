@@ -1,35 +1,95 @@
 {% extends 'base.html' %}
 {% block title %}{{ job.title }} - Job Portal{% endblock %}
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <div>
-                <h1 class="card-title">{{ job.title }}</h1>
-                <p class="text-muted mb-1">{{ job.company_name }} · {{ job.location }}</p>
-                <p class="mb-0"><strong>Salary:</strong> {{ job.salary }}</p>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                    <div>
+                        <h1 class="card-title mb-2">{{ job.title }}</h1>
+                        <div class="d-flex flex-wrap gap-3 mb-2">
+                            <span><i class="bi bi-building"></i> <strong>{{ job.company_name }}</strong></span>
+                            <span><i class="bi bi-geo-alt"></i> {{ job.location }}</span>
+                            <span><i class="bi bi-currency-dollar"></i> {{ job.salary }}</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-primary">{{ job.get_job_type_display }}</span>
+                            <span class="badge bg-info">{{ job.get_category_display }}</span>
+                            <span class="badge bg-secondary">{{ job.get_experience_level_display }}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% if user.is_authenticated and user_role == 'recruiter' and job.posted_by == user %}
+                            <a href="{% url 'jobs:job_edit' job.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+                            <a href="{% url 'jobs:job_delete' job.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Delete</a>
+                            <a href="{% url 'applications:job_applicants' job.pk %}" class="btn btn-primary">
+                                <i class="bi bi-people"></i> Applicants ({{ job.get_application_count }})
+                            </a>
+                        {% elif user.is_authenticated and user_role == 'job_seeker' %}
+                            {% if is_saved %}
+                                <a href="{% url 'jobs:unsave_job' job.pk %}" class="btn btn-outline-warning"><i class="bi bi-bookmark-fill"></i> Saved</a>
+                            {% else %}
+                                <a href="{% url 'jobs:save_job' job.pk %}" class="btn btn-outline-secondary"><i class="bi bi-bookmark"></i> Save</a>
+                            {% endif %}
+                            {% if has_applied %}
+                                <span class="btn btn-success disabled"><i class="bi bi-check-circle"></i> Applied</span>
+                            {% else %}
+                                <a href="{% url 'applications:apply' job.pk %}" class="btn btn-primary"><i class="bi bi-send"></i> Apply Now</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <hr>
+                <div class="mt-3">
+                    <h5><i class="bi bi-file-text"></i> Job Description</h5>
+                    <p class="card-text">{{ job.description|linebreaks }}</p>
+                </div>
+                {% if job.requirements %}
+                <div class="mt-4">
+                    <h5><i class="bi bi-list-check"></i> Requirements</h5>
+                    <p class="card-text">{{ job.requirements|linebreaks }}</p>
+                </div>
+                {% endif %}
+                <p class="text-muted small mt-3 mb-0"><i class="bi bi-calendar"></i> Posted on {{ job.created_at|date:"F d, Y" }}</p>
             </div>
-            <div class="d-flex gap-2">
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Job Summary</h5>
+            </div>
+            <div class="card-body">
+                <p><strong><i class="bi bi-building"></i> Company:</strong><br>{{ job.company_name }}</p>
+                <p><strong><i class="bi bi-geo-alt"></i> Location:</strong><br>{{ job.location }}</p>
+                <p><strong><i class="bi bi-currency-dollar"></i> Salary:</strong><br>{{ job.salary }}</p>
+                <p><strong><i class="bi bi-clock"></i> Job Type:</strong><br>{{ job.get_job_type_display }}</p>
+                <p><strong><i class="bi bi-tag"></i> Category:</strong><br>{{ job.get_category_display }}</p>
+                <p><strong><i class="bi bi-person-badge"></i> Experience:</strong><br>{{ job.get_experience_level_display }}</p>
                 {% if user.is_authenticated and user_role == 'recruiter' and job.posted_by == user %}
-                    <a href="{% url 'jobs:job_edit' job.pk %}" class="btn btn-outline-primary">Edit</a>
-                    <a href="{% url 'jobs:job_delete' job.pk %}" class="btn btn-outline-danger">Delete</a>
-                    <a href="{% url 'applications:job_applicants' job.pk %}" class="btn btn-primary">View Applicants</a>
-                {% elif user.is_authenticated and user_role == 'job_seeker' %}
-                    {% if has_applied %}
-                        <span class="btn btn-secondary disabled">Already Applied</span>
-                    {% else %}
-                        <a href="{% url 'applications:apply' job.pk %}" class="btn btn-primary">Apply Now</a>
-                    {% endif %}
+                    <hr>
+                    <p><strong>Applications:</strong> {{ job.get_application_count }}</p>
+                    <p><strong>Pending:</strong> {{ job.get_pending_applications_count }}</p>
                 {% endif %}
             </div>
         </div>
-        <hr>
-        <div class="mt-3">
-            <h6>Description</h6>
-            <p class="card-text">{{ job.description|linebreaks }}</p>
+        {% if related_jobs %}
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-arrow-repeat"></i> Related Jobs</h5>
+            </div>
+            <div class="card-body">
+                {% for related in related_jobs %}
+                    <div class="mb-3 pb-3 border-bottom">
+                        <h6><a href="{% url 'jobs:job_detail' related.pk %}" class="text-decoration-none">{{ related.title }}</a></h6>
+                        <small class="text-muted">{{ related.company_name }} · {{ related.location }}</small>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <p class="text-muted small mb-0">Posted on {{ job.created_at|date:"F d, Y" }}</p>
+        {% endif %}
     </div>
 </div>
-<a href="{% url 'jobs:job_list' %}" class="btn btn-outline-secondary mt-3">Back to Jobs</a>
+<a href="{% url 'jobs:job_list' %}" class="btn btn-outline-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Jobs</a>
 {% endblock %}

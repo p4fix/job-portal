@@ -15,7 +15,9 @@ class Application(models.Model):
     applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications')
     resume = models.FileField(upload_to='resumes/')
     status = models.CharField(max_length=20, choices=ApplicationStatus.choices, default=ApplicationStatus.PENDING)
+    notes = models.TextField(blank=True, help_text="Internal notes for recruiter")
     applied_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-applied_at']

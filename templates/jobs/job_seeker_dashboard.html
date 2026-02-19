@@ -1,29 +1,112 @@
 {% extends 'base.html' %}
 {% block title %}Job Seeker Dashboard - Job Portal{% endblock %}
 {% block content %}
-<h1 class="mb-4">Job Seeker Dashboard</h1>
-<p class="lead text-muted">Track your applications and find new opportunities.</p>
-<a href="{% url 'jobs:job_list' %}" class="btn btn-primary mb-4">Browse Jobs</a>
-<a href="{% url 'applications:my_applications' %}" class="btn btn-outline-primary mb-4">My Applications</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1><i class="bi bi-speedometer2"></i> Job Seeker Dashboard</h1>
+        <p class="text-muted mb-0">Track your applications and find new opportunities.</p>
+    </div>
+    <div>
+        <a href="{% url 'jobs:job_list' %}" class="btn btn-primary"><i class="bi bi-search"></i> Browse Jobs</a>
+        <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-outline-secondary"><i class="bi bi-bookmark"></i> Saved Jobs</a>
+    </div>
+</div>
 
-<div class="card shadow-sm">
-    <div class="card-header bg-white"><h5 class="mb-0">Recent Applications</h5></div>
-    <div class="card-body p-0">
-        {% if applications %}
-            <ul class="list-group list-group-flush">
-                {% for app in applications %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div>
-                            <a href="{% url 'jobs:job_detail' app.job.pk %}" class="fw-bold text-decoration-none">{{ app.job.title }}</a>
-                            <span class="text-muted"> · {{ app.job.company_name }}</span>
-                        </div>
-                        <span class="badge {% if app.status == 'Accepted' %}bg-success{% elif app.status == 'Rejected' %}bg-danger{% else %}bg-secondary{% endif %}">{{ app.status }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="p-4 mb-0 text-muted">You haven't applied to any jobs yet. <a href="{% url 'jobs:job_list' %}">Browse jobs</a> to get started.</p>
-        {% endif %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-primary">
+            <div class="card-body text-center">
+                <h2 class="text-primary mb-0">{{ total_applications }}</h2>
+                <p class="text-muted mb-0"><i class="bi bi-send"></i> Total Applications</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body text-center">
+                <h2 class="text-warning mb-0">{{ pending_applications }}</h2>
+                <p class="text-muted mb-0"><i class="bi bi-clock"></i> Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-success">
+            <div class="card-body text-center">
+                <h2 class="text-success mb-0">{{ accepted_applications }}</h2>
+                <p class="text-muted mb-0"><i class="bi bi-check-circle"></i> Accepted</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-info">
+            <div class="card-body text-center">
+                <h2 class="text-info mb-0">{{ saved_count }}</h2>
+                <p class="text-muted mb-0"><i class="bi bi-bookmark"></i> Saved Jobs</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Applications</h5>
+                <a href="{% url 'applications:my_applications' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if applications %}
+                    <ul class="list-group list-group-flush">
+                        {% for app in applications %}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="{% url 'jobs:job_detail' app.job.pk %}" class="fw-bold text-decoration-none">{{ app.job.title }}</a>
+                                        <br><small class="text-muted">{{ app.job.company_name }}</small>
+                                    </div>
+                                    <span class="badge {% if app.status == 'Accepted' %}bg-success{% elif app.status == 'Rejected' %}bg-danger{% else %}bg-secondary{% endif %}">{{ app.status }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <i class="bi bi-inbox display-6 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">No applications yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-bookmark"></i> Saved Jobs</h5>
+                <a href="{% url 'jobs:saved_jobs' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if saved_jobs %}
+                    <ul class="list-group list-group-flush">
+                        {% for saved in saved_jobs %}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="{% url 'jobs:job_detail' saved.job.pk %}" class="fw-bold text-decoration-none">{{ saved.job.title }}</a>
+                                        <br><small class="text-muted">{{ saved.job.company_name }} · {{ saved.job.location }}</small>
+                                    </div>
+                                    <a href="{% url 'jobs:unsave_job' saved.job.pk %}" class="btn btn-sm btn-outline-danger" title="Remove"><i class="bi bi-bookmark-x"></i></a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <i class="bi bi-bookmark display-6 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">No saved jobs yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -4,8 +4,8 @@ Django settings for jobportal project.
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Build paths: settings.py is in jobportal/jobportal/, so parent.parent.parent = project root.
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-change-this-in-production-jobportal-2024'
@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'jobportal.urls'
+ROOT_URLCONF = 'jobportal.jobportal.urls'
 
 TEMPLATES = [
     {
@@ -59,7 +59,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'jobportal.wsgi.application'
+WSGI_APPLICATION = 'jobportal.jobportal.wsgi.application'
 
 # Database - SQLite (default)
 DATABASES = {
