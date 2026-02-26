@@ -1,15 +1,87 @@
-/* Job Portal - custom styles (Bootstrap 5 used for layout) */
+/* Job Portal - modern, responsive UI with light/dark theme */
 
 :root {
-    --navbar-bg: #111827;
+    /* base (dark-leaning) values before JS/theme applies */
+    --navbar-bg: #020617;
     --accent: #2563eb;
+    --bg-page: #020617;
+    --bg-surface: #020617;
+    --bg-elevated: #020617;
+    --bg-elevated-soft: rgba(15, 23, 42, 0.9);
+    --text-primary: #e5e7eb;
+    --text-muted: #9ca3af;
+    --border-subtle: rgba(148, 163, 184, 0.35);
+    --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+    --shadow-soft-hover: 0 22px 65px rgba(15, 23, 42, 1);
+    --pill-bg: rgba(37, 99, 235, 0.16);
+    --chip-bg: rgba(15, 23, 42, 0.9);
+    --chip-text: #e5e7eb;
+    --footer-bg: rgba(15, 23, 42, 0.98);
+}
+
+[data-theme="light"] {
+    --navbar-bg: #111827;
+    --bg-page: #f3f4f6;
+    --bg-surface: #f9fafb;
+    --bg-elevated: #ffffff;
+    --bg-elevated-soft: #ffffff;
+    --text-primary: #0f172a;
+    --text-muted: #6b7280;
+    --border-subtle: rgba(148, 163, 184, 0.22);
+    --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
+    --shadow-soft-hover: 0 18px 45px rgba(15, 23, 42, 0.18);
+    --pill-bg: rgba(37, 99, 235, 0.08);
+    --chip-bg: #eef2ff;
+    --chip-text: #3730a3;
+    --footer-bg: #f9fafb;
+}
+
+[data-theme="dark"] {
+    --navbar-bg: #020617;
+    --bg-page: #020617;
+    --bg-surface: #020617;
+    --bg-elevated: #020617;
+    --bg-elevated-soft: rgba(15, 23, 42, 0.9);
+    --text-primary: #e5e7eb;
+    --text-muted: #9ca3af;
+    --border-subtle: rgba(31, 41, 55, 0.8);
+    --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+    --shadow-soft-hover: 0 22px 65px rgba(15, 23, 42, 1);
+    --pill-bg: rgba(37, 99, 235, 0.16);
+    --chip-bg: rgba(15, 23, 42, 0.9);
+    --chip-text: #e5e7eb;
+    --footer-bg: rgba(15, 23, 42, 0.98);
 }
 
 body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #f3f4f6;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 220ms ease, color 220ms ease;
+}
+
+/* Typography that adapts with theme */
+h1, h2, h3, h4, h5, h6,
+.card-title,
+.card-text,
+label,
+p,
+span,
+li {
+    color: var(--text-primary);
+}
+
+.text-muted,
+.text-body-secondary {
+    color: var(--text-muted) !important;
+}
+
+.text-body {
+    color: var(--text-primary) !important;
 }
 
 main {
@@ -20,7 +92,9 @@ main {
 
 .navbar {
     background-color: var(--navbar-bg) !important;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.45);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.3);
 }
 
 .navbar-brand {
@@ -28,44 +102,127 @@ main {
     letter-spacing: 0.03em;
 }
 
+.navbar .navbar-nav .nav-link {
+    position: relative;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding-inline: 0.9rem;
+    color: rgba(248, 250, 252, 0.84) !important;
+    transition: color 160ms ease, opacity 160ms ease;
+}
+
+.navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0.9rem;
+    right: 0.9rem;
+    bottom: 0.35rem;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), #22c55e);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 180ms ease-out, opacity 180ms ease-out;
+    opacity: 0;
+}
+
+.navbar .nav-link:hover::after,
+.navbar .nav-link:focus-visible::after {
+    transform: scaleX(1);
+    opacity: 1;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus-visible {
+    color: #ffffff !important;
+    opacity: 1;
+}
+
 .navbar-brand,
 .navbar .nav-link {
     color: rgba(255, 255, 255, 0.9) !important;
 }
 
-.navbar .nav-link:hover,
-.navbar .nav-link:focus {
-    color: #ffffff !important;
+.theme-toggle {
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.45) !important;
+    background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.3), transparent),
+                rgba(15, 23, 42, 0.96);
+    color: #e5e7eb;
+    padding-inline: 0.9rem;
+    padding-block: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.7);
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 130ms ease, background-color 180ms ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(248, 250, 252, 0.8) !important;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.95);
+}
+
+.theme-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, var(--accent), #1d4ed8);
     border-color: transparent;
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.6);
+    transition: transform 130ms ease, box-shadow 130ms ease, filter 130ms ease;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
     background: linear-gradient(135deg, #1d4ed8, #1e40af);
-    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.8);
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(1.03);
 }
 
 .btn-outline-secondary {
     border-radius: 999px;
+    transition: transform 130ms ease, box-shadow 130ms ease, background-color 130ms ease, color 130ms ease, border-color 130ms ease;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus-visible {
+    background-color: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.85);
+    color: var(--text-primary);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
+    transform: translateY(-1px);
 }
 
 .card {
     border-radius: 0.85rem;
-    border: 1px solid rgba(15, 23, 42, 0.06);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    border: 1px solid var(--border-subtle);
+    background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.12), transparent),
+                var(--bg-elevated-soft);
+    box-shadow: var(--shadow-soft);
+    transition: transform 150ms ease, box-shadow 170ms ease, border-color 170ms ease, background-color 170ms ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft-hover);
+    border-color: rgba(37, 99, 235, 0.6);
 }
 
 .card-header {
-    border-bottom-color: rgba(148, 163, 184, 0.3);
+    border-bottom-color: rgba(148, 163, 184, 0.35);
 }
 
 .hero {
-    padding: 2rem 0 0.5rem;
+    padding: 2.25rem 0 0.5rem;
 }
 
 .hero-title {
@@ -76,7 +233,7 @@ main {
 
 .hero-subtitle {
     font-size: 0.98rem;
-    color: #6b7280;
+    color: var(--text-muted);
     max-width: 32rem;
 }
 
@@ -86,8 +243,8 @@ main {
     gap: 0.35rem;
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
-    background: rgba(37, 99, 235, 0.08);
-    color: #1d4ed8;
+    background: var(--pill-bg);
+    color: #bfdbfe;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -120,15 +277,31 @@ main {
     gap: 0.35rem;
     padding: 0.25rem 0.7rem;
     border-radius: 999px;
-    background: #eef2ff;
-    color: #3730a3;
+    background: var(--chip-bg);
+    color: var(--chip-text);
     font-size: 0.78rem;
     font-weight: 600;
 }
 
 .footer {
-    background-color: #f9fafb;
-    border-top: 1px solid rgba(148, 163, 184, 0.35);
+    background-color: var(--footer-bg);
+    border-top: 1px solid rgba(148, 163, 184, 0.4);
+    color: var(--text-muted);
+}
+
+/* Smooth hover for generic interactive elements */
+a,
+button,
+.card,
+.form-control,
+.form-select {
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.9), 0 0 0 4px rgba(37, 99, 235, 0.24);
+    border-color: rgba(37, 99, 235, 0.9);
 }
 
 @media (max-width: 767.98px) {
@@ -155,4 +328,3 @@ main {
         padding-top: 2.75rem;
     }
 }
-

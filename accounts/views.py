@@ -6,6 +6,13 @@ from django.contrib import messages
 from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm
 from .models import Profile
 
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def custom_logout(request):
+    logout(request)
+    return redirect('accounts:login')
+
 
 def register(request):
     if request.user.is_authenticated:
